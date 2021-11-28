@@ -19,6 +19,12 @@ public:
 private slots:
     void on_pushButton_clicked();
 
+    void on_pushButton_update_clicked();
+
+    void on_pushButton_update_delete_clicked();
+
+    void on_pushButton_load_clicked();
+
 private:
     Ui::EmployeeInfo *ui;
 };

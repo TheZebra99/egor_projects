@@ -84,3 +84,8 @@ void MainWindow::connClose()
     my_database.close();
     my_database.removeDatabase(QSqlDatabase::defaultConnection);
 }
+
+QSqlDatabase MainWindow::getDB()
+{
+    return my_database;
+}

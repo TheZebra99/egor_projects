@@ -21,7 +21,7 @@ public:
     //QSqlDatabase my_database; // чтобы базу данных видел ивент push_on_button
     void connClose();
     bool connOpen();
-
+    QSqlDatabase getDB();
 private slots:
     void on_pushButton_clicked();
 
