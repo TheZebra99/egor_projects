@@ -115,12 +115,124 @@ void EmployeeInfo::on_pushButton_load_clicked()
     QSqlQueryModel * modal = new QSqlQueryModel;
     connection.connOpen();
     QSqlQuery *query = new QSqlQuery(connection.getDB());
-    query->prepare("SELECT * FROM employee_info");
+
+    query->prepare("SELECT employee_id FROM employee_info");
+
+    QSqlQuery *query2 = new QSqlQuery(connection.getDB());
+
+    query2->prepare("SELECT * FROM employee_info");
+
     query->exec();
-    modal->setQuery(*query);
+    query2->exec();
+    modal->setQuery(*query); // через model передаем запросы sql в виджеты
+    ui->listView->setModel(modal);
+    ui->comboBox->setModel(modal);
+    modal->setQuery(*query2);
     ui->tableView->setModel(modal);
+
     connection.connClose();
     qDebug() << (modal->rowCount());
 
+}
+
+
+void EmployeeInfo::on_comboBox_currentIndexChanged(const QString &arg1)
+{
+    QString name1=ui->comboBox->currentText(); //
+
+    MainWindow connection;
+    if (!connection.connOpen())
+    {
+        qDebug() << "Failed to open the database";
+        return;
+    }
+    connection.connOpen();
+
+    QSqlQuery query;
+    query.prepare("SELECT * FROM employee_info WHERE name='"+name1+"'");
+
+    if (query.exec())
+    {
+        while(query.next())
+        {
+            ui->lineEdit_Employee_id->setText(query.value(0).toString());
+            ui->lineEdit_Name->setText(query.value(1).toString());
+            ui->lineEdit_Surname->setText(query.value(2).toString());
+            ui->lineEdit_Age->setText(query.value(3).toString());
+        }
+        connection.connClose();
+    }
+    else
+    {
+        QMessageBox::critical(this, tr("error::"), query.lastError().text());
+    }
+
+
+}
+
+
+void EmployeeInfo::on_tableView_activated(const QModelIndex &index)
+{
+    QString value=ui->tableView->model()->data(index).toString();
+
+    MainWindow connection;
+    if (!connection.connOpen())
+    {
+        qDebug() << "Failed to open the database";
+        return;
+    }
+    connection.connOpen();
+
+    QSqlQuery query;
+    query.prepare("SELECT * FROM employee_info WHERE employee_id='"+value+"'or name='"+value+"' or surname='"+value+"' or age='"+value+"'");
+
+    if (query.exec())
+    {
+        while(query.next())
+        {
+            ui->lineEdit_Employee_id->setText(query.value(0).toString());
+            ui->lineEdit_Name->setText(query.value(1).toString());
+            ui->lineEdit_Surname->setText(query.value(2).toString());
+            ui->lineEdit_Age->setText(query.value(3).toString());
+        }
+        connection.connClose();
+    }
+    else
+    {
+        QMessageBox::critical(this, tr("error::"), query.lastError().text());
+    }
+}
+
+
+void EmployeeInfo::on_listView_activated(const QModelIndex &index)
+{
+    QString value=ui->listView->model()->data(index).toString();
+
+    MainWindow connection;
+    if (!connection.connOpen())
+    {
+        qDebug() << "Failed to open the database";
+        return;
+    }
+    connection.connOpen();
+
+    QSqlQuery query;
+    query.prepare("SELECT * FROM employee_info WHERE employee_id='"+value+"'");
+
+    if (query.exec())
+    {
+        while(query.next())
+        {
+            ui->lineEdit_Employee_id->setText(query.value(0).toString());
+            ui->lineEdit_Name->setText(query.value(1).toString());
+            ui->lineEdit_Surname->setText(query.value(2).toString());
+            ui->lineEdit_Age->setText(query.value(3).toString());
+        }
+        connection.connClose();
+    }
+    else
+    {
+        QMessageBox::critical(this, tr("error::"), query.lastError().text());
+    }
 }
 
